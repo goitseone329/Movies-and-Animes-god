@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,7 +8,7 @@
         :root {
             --bg-primary: #0f0f12;
             --bg-surface: #1a1a24;
-            --accent: #0052ff; /* Personalized Blue Accent */
+            --accent: #0052ff;
             --text-main: #ffffff;
             --text-muted: #8a8a9e;
         }
@@ -106,7 +105,6 @@
             display: none !important;
         }
 
-        /* Persistent Player Layout Frame */
         #player-section {
             margin-bottom: 2.5rem;
             background-color: var(--bg-surface);
@@ -118,7 +116,7 @@
         .player-wrapper {
             position: relative;
             width: 100%;
-            padding-top: 56.25%; /* 16:9 Cinema Widescreen Aspect Ratio */
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
             background-color: #000;
             border-radius: 6px;
             overflow: hidden;
@@ -151,7 +149,6 @@
             font-weight: bold;
         }
 
-        /* Episode Controller Styling */
         .episode-container {
             display: flex;
             align-items: center;
@@ -168,7 +165,6 @@
             cursor: pointer;
         }
 
-        /* Catalog Layout Grid */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -241,7 +237,6 @@
     </header>
 
     <main>
-        <!-- Combined Media Player Section Component -->
         <section id="player-section" class="hidden">
             <div class="player-wrapper">
                 <iframe id="video-stream-player" src="" allowfullscreen frameborder="0"></iframe>
@@ -249,7 +244,6 @@
             <div class="player-controls">
                 <div>
                     <h2 id="now-playing-title">Now Playing</h2>
-                    <!-- Dynamic Interactive Episode Selection Menu -->
                     <div id="anime-episode-selector" class="episode-container hidden" style="margin-top: 0.5rem;">
                         <label for="ep-select">Switch Episode: </label>
                         <select id="ep-select" onchange="changeAnimeEpisode(this.value)"></select>
@@ -259,7 +253,6 @@
             </div>
         </section>
 
-        <!-- Media Dashboard Feed -->
         <section id="catalog-section">
             <h2 id="section-heading">Trending Movies</h2>
             <div id="media-grid" class="grid"></div>
@@ -275,16 +268,14 @@
         let activeAnimeEpisodes = [];
         let activeAnimeTitle = "";
 
-        // Shared public mirrored API targets for streaming assets
         const MOVIE_API = "https://themoviedb.org";
-        const TMDB_PUBLIC_KEY = "8410266472483a307fc7be3617be3c4d"; 
+        // Fixed and Active TMDB Key
+        const TMDB_PUBLIC_KEY = "8baba8ab6b8bbe247645bcae7df63d0d"; 
         const ANIME_API = "https://consumet.org";
 
-        // Native app setup listener
         document.addEventListener("DOMContentLoaded", () => {
             loadTrendingContent();
             
-            // Allow press 'Enter' keyboard tracking to fire search execution
             document.getElementById('search-input').addEventListener('keypress', (e) => {
                 if (e.key === 'Enter') executeSearch();
             });
@@ -294,6 +285,7 @@
             currentTab = tab;
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('search-input').value = "";
+            closePlayer();
             
             if(tab === 'movie') {
                 document.getElementById('btn-movies').classList.add('active');
@@ -327,3 +319,12 @@
         function renderMovies(movies) {
             const grid = document.getElementById('media-grid');
             grid.innerHTML = "";
+            if(!movies || movies.length === 0) {
+                grid.innerHTML = "<p>No movies found matching criteria.</p>";
+                return;
+            }
+            movies.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.onclick = () => launchMoviePlayer(item.id, item.title);
+                
